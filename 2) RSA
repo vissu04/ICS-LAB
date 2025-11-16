@@ -1,0 +1,47 @@
+week2:
+steps:-( download enc.txt and pubkey.pem from https://github.com/rampriyakilari/ICS-Needs)
+1. cd Desktop
+2. cd rsa (create a file in desktop with enc.txt and pubkey.pem)
+3. ls
+  -enc.txt  pubkey.pem
+4. cat pubkey.pem
+5. openssl rsa -pubin -inform PEM -text -noout < pubkey.pem
+6. Copy the hexadecimal decimal code into a notepad as n value. 
+   As it is a hexadecimal we can convert it into decimal for gaining the plaintext
+	Hexadecimal to decimal convertor (https://www.binaryhexconverter.com/hex-to-decimal-converter)
+7. Paste the decimal code in the notepad as n value
+n=188198812920607963838697239461650439807163563379417382700763356422988859715234665
+485319060606504743045317388011303396716199692321205734031879550656996221305168759307650257059
+8. Need to factorize n
+9. So goto website factordb.com click search, paste decimal value of n
+10. paste the n value click factorize
+	then click in 3967.....
+	click 87.(show)
+11. p=398075086424064937397125500550386491199064362342526708406385189575946388957261768583317
+	then click in 47277.....
+	click 87.(show)
+12. q=472772146107435302536223071973048224632914695302097116459852171130520711256363590397527
+13. pip install pycryptodome
+14. touch exploit.py
+	>create a dec.txt (empty file in rsa folder)
+15. ls
+	dec.txt  enc.txt  exploit.py  pubkey.pem
+16. code this code into exploit.py:-
+from Crypto.PublicKey import RSA
+from Crypto.Util.number import inverse 
+import base64
+n = 188198812920607963838697239461650439807163563379417382700763356422988859715234665485319060606504743045317388011303396716199692321205734031879550656996221305168759307650257059
+e = 65537
+p=398075086424064937397125500550386491199064362342526708406385189575946388957261768583317
+q = 472772146107435302536223071973048224632914695302097116459852171130520711256363590397527
+phi_n = (p - 1)*(q - 1) 
+d = inverse(e, phi_n)
+key = RSA.construct((n, e, d, p, q)) 
+fn = "private.pem"
+with open(fn, "wb") as f: 
+	f.write(key.exportKey())
+17. python exploit.py 
+18. openssl pkeyutl -decrypt -in enc.txt -out dec.txt -inkey private.pem 
+19. cat dec.txt 
+output:- 
+RSAisEasy
